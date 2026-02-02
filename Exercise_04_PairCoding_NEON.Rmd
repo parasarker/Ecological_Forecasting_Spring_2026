@@ -139,7 +139,7 @@ Within this project we'll create separate files for each part of the analysis. T
 ##' Download Targets
 ##' @return data.frame in long format with days as rows, and time, site_id, variable, and observed as columns
 download_targets <- function(){
-  readr::read_csv("https://data.ecoforecast.org/neon4cast-targets/aquatics/aquatics-targets.csv.gz", guess_max = 1e6)
+  readr::read_csv("https://sdsc.osn.xsede.org/bio230014-bucket01/challenges/targets/project_id=neon4cast/duration=P1D/aquatics-targets.csv.gz", guess_max = 1e6)
 }
 
 ##' Download Site metadata
@@ -162,8 +162,8 @@ merge_met_past <- function(target){
   sites <- unique(target$site_id)
   
   ## temporary hack to remove a site that's mid-behaving
-  sites = sites[!(sites=="POSE")] 
-  target = target |> filter(site_id %in% sites)  
+#  sites = sites[!(sites=="POSE")] 
+#  target = target |> filter(site_id %in% sites)  
   
   ## grab air temperature from the historical forecast
   noaa_past <- df_past |> 
@@ -432,7 +432,7 @@ which is a one-time task, after which you can do the pull as
 git pull upstream main
 ```
 2. Open a new R file and add the code below. This code just flushes out the pseudocode outline we started with at the beginning of this activity.
-```{r}
+```{r, fig.height = 15}
 ### Aquatic Forecast Workflow ###
 # devtools::install_github("eco4cast/neon4cast")
 library(tidyverse)
@@ -473,7 +473,7 @@ ggplot(target, aes(x = temperature, y = air_temperature)) +
 met_future %>% 
   ggplot(aes(x = datetime, y = air_temperature, group = parameter)) +
   geom_line() +
-  facet_grid(~site_id, scale ="free")
+  facet_wrap(vars(site_id), scales = "free", ncol = 8)
 
 ### Step 2: Calibrate forecast model
 model <- calibrate_forecast(target)
@@ -485,7 +485,7 @@ forecast <- run_forecast(model,met_future,site_data)
 forecast %>% 
   ggplot(aes(x = datetime, y = prediction, group = parameter)) +
   geom_line() +
-  facet_grid(variable~site_id, scale ="free")
+  facet_wrap(vars(variable, site_id), scales = "free", ncol = 8)
 
 ### Step 4: Save and submit forecast and metadata
 submit_forecast(forecast,team_info,submit=FALSE)
