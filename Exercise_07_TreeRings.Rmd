@@ -390,15 +390,18 @@ Third, let's look at the random effects. It is easy enough to plot the year effe
   if(length(ind.cols)>0){
     boxplot(out[,ind.cols],horizontal=TRUE,outline=FALSE,col=combined$PLOT,main="Individual Effects By Plot",xlab="cm")
     abline(v=0,lty=2)
+    legend("bottomright", legend=sort(unique(combined$PLOT)), col=sort(unique(combined$PLOT)), lwd=4)
     ## calculate plot-level means for random effects
     tapply(apply(out[,ind.cols],2,mean),combined$PLOT,mean)
     table(combined$PLOT)
     
-    spp = combined$SPP
-    boxplot(out[order(spp),ind.cols],horizontal=TRUE,outline=FALSE,col=spp[order(spp)],main="Individual Effects By Species",xlab="cm")
+    spp = as.factor(combined$SPP)
+    spp.order = order(spp)
+    spp.colors = rainbow(nlevels(spp))
+    
+    boxplot(out[,ind.cols[spp.order]],horizontal=TRUE,outline=FALSE,col=spp.colors[spp[spp.order]],main="Individual Effects By Species",xlab="cm")
     abline(v=0,lty=2)
-    spp.code = levels(spp)[table(spp)>0]
-    legend("bottomright",legend=rev(spp.code),col=rev(which(table(spp)>0)),lwd=4)
+    legend("bottomright",legend=rev(levels(spp)),col=rev(spp.colors),lwd=4)
     ## calculate species-level means for random effects
     tapply(apply(out[,ind.cols],2,mean),combined$SPP,mean)
   }
