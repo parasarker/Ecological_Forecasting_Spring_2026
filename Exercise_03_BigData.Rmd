@@ -205,8 +205,8 @@ if(file.exists("pheno.Rdata")){
   load("pheno.Rdata")
 } else{  ## to make knit faster, only download the data the first time
   
-s3 <- arrow::s3_bucket(bucket = "neon4cast-scores/parquet/phenology",
-                        endpoint_override = "data.ecoforecast.org",
+s3 <- arrow::s3_bucket(bucket = "bio230014-bucket01/neon4cast-scores/parquet/phenology",
+                        endpoint_override = "sdsc.osn.xsede.org",
                         anonymous=TRUE)
 ds <- arrow::open_dataset(s3)
 ds
